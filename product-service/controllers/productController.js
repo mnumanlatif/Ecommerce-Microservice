@@ -1,23 +1,12 @@
-const Product = require('../models/Product');
-const asyncHandler = require('../../shared/utils/asyncHandler');
-const { AppError } = require('../../shared/middleware/errorHandler');
+const asyncHandler = require('../../shared/middleware/asyncHandler');
+const productService = require('../services/productService');
 
-// GET /products
-const getAllProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find();
+exports.getAllProducts = asyncHandler(async (req, res) => {
+  const products = await productService.getAllProducts();
   res.json(products);
 });
 
-// POST /products
-const createProduct = asyncHandler(async (req, res) => {
-  const { title, description, price, imageUrl } = req.body;
-
-  if (!title || !price || !description || !imageUrl) {
-    throw new AppError('All fields are required', 400);
-  }
-
-  const newProduct = await Product.create({ title, description, price, imageUrl });
+exports.createProduct = asyncHandler(async (req, res) => {
+  const newProduct = await productService.createProduct(req.body);
   res.status(201).json(newProduct);
 });
-
-module.exports = { getAllProducts, createProduct };

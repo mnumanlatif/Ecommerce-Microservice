@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { AppError } = require('./errorHandler');
+const { AppError } = require('../../shared/middleware/errorHandler');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 

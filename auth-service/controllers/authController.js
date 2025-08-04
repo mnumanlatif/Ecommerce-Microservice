@@ -1,75 +1,44 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const asyncHandler = require('../../shared/utils/asyncHandler');
-const { AppError } = require('../../shared/middleware/errorHandler');
+const asyncHandler = require('../../shared/middleware/asyncHandler');
+const { registerUser, loginUser, getCurrentUser } = require('../services/authService');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
-const JWT_EXPIRES_IN = '1h';
-
-// Register new user
+// Register
 const register = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
-
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    throw new AppError('Email already registered', 400);
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const user = new User({ name, email, password: hashedPassword });
-  await user.save();
-
+  const { name, email, password, role } = req.body;
+  await registerUser(name, email, password, role);
   res.status(201).json({ message: 'User registered successfully' });
 });
 
-// Login user
+// Login
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  const { token, payload } = await loginUser(email, password);
 
-  const user = await User.findOne({ email });
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    throw new AppError('Invalid credentials', 400);
-  }
-
-  const payload = { id: user._id, name: user.name, email: user.email };
-  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-// console.log('Generated access token:', token);
-  // ✅ Set token in HTTP-only cookie
   res.cookie('accessToken', token, {
     httpOnly: true,
-    sameSite: 'Lax', // Use 'None' with secure: true in production over HTTPS
-    secure: false,   // Set to true in production
-    maxAge: 60 * 60 * 1000, // 1 hour
+    sameSite: 'Lax',
+    secure: false, // Set true in production
+    maxAge: 60 * 60 * 1000,
   });
 
-  res.json({ message: 'Login successful', user: payload, token });  // include token here
+  res.json({ message: 'Login successful', user: payload, token });
 });
-// Logout user
+
+// Logout
 const logout = asyncHandler(async (req, res) => {
   res.clearCookie('accessToken', {
     httpOnly: true,
     sameSite: 'Lax',
-    secure: false, // Set to true in production
+    secure: false,
   });
 
   res.json({ message: 'Logout successful' });
 });
 
-// Get current logged-in user
+// Get current user
 const currentUser = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
-
-  const user = await User.findById(req.user.id).select('-password');
-  if (!user) {
-    return res.status(404).json({ message: 'User not found' });
-  }
-
+  const user = await getCurrentUser(req.user.id);
   res.json(user);
 });
-
 
 module.exports = {
   register,

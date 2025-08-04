@@ -2,8 +2,8 @@
 **/node_modules/
 
 # Ignore environment variable files
-**/.env
-**/.env.*  # e.g., .env.development, .env.production
+# **/.env
+# **/.env.*  # e.g., .env.development, .env.production
 
 # Ignore log files
 **/logs/
