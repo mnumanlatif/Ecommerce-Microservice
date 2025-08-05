@@ -3,7 +3,7 @@ const { AppError } = require('../../shared/middleware/errorHandler');
 
 const processPaymentController = async (req, res, next) => {
   try {
-    const userId = req.user && req.user._id;  // assuming you set req.user from auth middleware
+    const userId = req.user && (req.user._id || req.user.id);  
 
     if (!userId) {
       throw new AppError('User not authenticated', 401);
