@@ -42,10 +42,21 @@ const addItemsToCart = async (userId, items) => {
 
 const getCartByUserId = async (userId) => {
   if (!userId) throw new AppError('Missing userId', 400);
-  const cart = await Cart.findOne({ userId });
-  if (!cart) throw new AppError('Cart not found', 404);
+
+  let cart = await Cart.findOne({ userId });
+
+  // If no cart exists, return empty cart object
+  if (!cart) {
+    return {
+      userId,
+      items: [],
+      total: 0,
+    };
+  }
+
   return cart;
 };
+
 
 const removeItemFromCart = async (userId, productId) => {
   if (!userId || !productId) throw new AppError('Missing required fields', 400);
