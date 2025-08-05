@@ -6,6 +6,7 @@ const addToCart = asyncHandler(async (req, res) => {
   const { userId, items } = req.body;
   const cart = await cartService.addItemsToCart(userId, items);
   res.status(200).json({ status: 'success', message: 'Item(s) added to cart', cart });
+  console.log('📥 Received cart POST:', req.body);
 });
 
 // Get cart by user

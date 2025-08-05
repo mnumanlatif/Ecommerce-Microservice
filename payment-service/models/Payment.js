@@ -18,6 +18,11 @@ const paymentSchema = new mongoose.Schema({
         required: true, 
         min: 1 
       },
+      price: {  // Add price per item here
+        type: Number,
+        required: true,
+        min: 0
+      },
     },
   ],
   status: { 
@@ -30,12 +35,20 @@ const paymentSchema = new mongoose.Schema({
     required: true, 
     min: 0 
   },
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
+  shippingDetails: {  // Add shipping details embedded document
+    fullName: { type: String, required: true },
+    address: { type: String, required: true },
+    city: { type: String, required: true },
+    postalCode: { type: String, required: true },
+    phone: { type: String, required: true },
+  },
+  paymentMethod: {   // Add payment method
+    type: String,
+    enum: ['card', 'cod'],
+    required: true,
   },
 }, {
-  timestamps: true, // adds createdAt and updatedAt automatically
+  timestamps: true,
 });
 
 module.exports = mongoose.model('Payment', paymentSchema);
