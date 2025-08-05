@@ -13,8 +13,15 @@ const addToCart = asyncHandler(async (req, res) => {
 const getCartByUser = asyncHandler(async (req, res) => {
   const userId = req.query.userId;
   const cart = await cartService.getCartByUserId(userId);
+
+  // If no cart found, respond with empty items array instead of 404 or null
+  if (!cart) {
+    return res.status(200).json({ items: [] });
+  }
+
   res.status(200).json(cart);
 });
+
 
 // Remove from cart
 const removeFromCart = asyncHandler(async (req, res) => {
@@ -30,9 +37,23 @@ const checkout = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Checkout successful', order });
 });
 
+const clearCart = asyncHandler(async (req, res) => {
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ message: 'userId is required' });
+  }
+
+  // Call service to clear cart items for userId
+  await cartService.clearCartByUserId(userId);
+
+  res.status(200).json({ message: 'Cart cleared successfully' });
+});
+
+
 module.exports = {
   addToCart,
   getCartByUser,
   removeFromCart,
   checkout,
+  clearCart,  
 };

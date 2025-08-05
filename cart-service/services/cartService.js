@@ -77,9 +77,16 @@ const checkoutCart = async (userId) => {
   return orderPayload;
 };
 
+const clearCartByUserId = async (userId) => {
+  // Delete all cart items for the given userId
+  return Cart.deleteMany({ userId });
+};
+
 module.exports = {
   addItemsToCart,
   getCartByUserId,
   removeItemFromCart,
   checkoutCart,
+  clearCartByUserId,
+
 };
