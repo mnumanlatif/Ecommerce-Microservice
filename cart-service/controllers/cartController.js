@@ -48,6 +48,11 @@ const clearCart = asyncHandler(async (req, res) => {
 
   res.status(200).json({ message: 'Cart cleared successfully' });
 });
+const updateCartItem = asyncHandler(async (req, res) => {
+  const { userId, productId, quantity } = req.body;
+  const updatedCartItems = await cartService.updateCartItemQuantity(userId, productId, quantity);
+  res.status(200).json({ status: 'success', items: updatedCartItems });
+});
 
 
 module.exports = {
@@ -56,4 +61,5 @@ module.exports = {
   removeFromCart,
   checkout,
   clearCart,  
+  updateCartItem,
 };

@@ -93,11 +93,27 @@ const clearCartByUserId = async (userId) => {
   return Cart.deleteMany({ userId });
 };
 
+const updateCartItemQuantity = async (userId, productId, quantity) => {
+  const cart = await Cart.findOne({ userId });
+  if (!cart) throw new AppError(`Cart not found for userId: ${userId}`, 404);
+
+  const item = cart.items.find(item => item.productId.toString() === productId);
+  if (!item) throw new AppError(`Item ${productId} not found in cart`, 404);
+
+  item.quantity = quantity;
+  await cart.save();
+
+  return cart.items;
+};
+
+
+
 module.exports = {
   addItemsToCart,
   getCartByUserId,
   removeItemFromCart,
   checkoutCart,
   clearCartByUserId,
+  updateCartItemQuantity,
 
 };
