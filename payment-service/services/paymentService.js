@@ -1,6 +1,7 @@
 const Payment = require('../models/Payment');
 const paymentProducer = require('../events/paymentProducer');
 const { AppError } = require('../../shared/middleware/errorHandler');
+const generateHash = require('../utils/generateHash');
 
 /**
  * Process a payment for an order.
@@ -79,6 +80,62 @@ const calculateTotal = (items) => {
   }, 0);
 };
 
+const handleJazzCashPayment = (amount, email) => {
+  const dateTime = new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14);
+  const txnRef = `JC-${dateTime}`;
+
+  const payload = {
+    pp_Version: '1.1',
+    pp_TxnType: 'MWALLET',
+    pp_Language: 'EN',
+    pp_MerchantID: process.env.JAZZCASH_MERCHANT_ID,
+    pp_Password: process.env.JAZZCASH_PASSWORD,
+    pp_TxnRefNo: txnRef,
+    pp_Amount: amount * 100,
+    pp_TxnCurrency: 'PKR',
+    pp_TxnDateTime: dateTime,
+    pp_BillReference: 'billRef-Jazz',
+    pp_Description: 'JazzCash Payment',
+    pp_ReturnURL: process.env.JAZZCASH_RETURN_URL,
+  };
+
+  payload.pp_SecureHash = generateHash(payload, process.env.JAZZCASH_INTEGRITY_SALT);
+
+  return {
+    postUrl: process.env.JAZZCASH_POST_URL,
+    fields: payload,
+  };
+};
+
+const handleEasyPaisaPayment = (amount, email) => {
+  const dateTime = new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14);
+  const txnRef = `EP-${dateTime}`;
+
+  const payload = {
+    pp_Version: '1.1',
+    pp_TxnType: 'MWALLET',
+    pp_Language: 'EN',
+    pp_MerchantID: process.env.EASYPAISA_MERCHANT_ID,
+    pp_Password: process.env.EASYPAISA_PASSWORD,
+    pp_TxnRefNo: txnRef,
+    pp_Amount: amount * 100,
+    pp_TxnCurrency: 'PKR',
+    pp_TxnDateTime: dateTime,
+    pp_BillReference: 'billRef-EasyPaisa',
+    pp_Description: 'EasyPaisa Payment',
+    pp_ReturnURL: process.env.EASYPAISA_RETURN_URL,
+  };
+
+  payload.pp_SecureHash = generateHash(payload, process.env.EASYPAISA_INTEGRITY_SALT);
+
+  return {
+    postUrl: process.env.EASYPAISA_POST_URL,
+    fields: payload,
+  };
+};
+
 module.exports = {
   processOrderPayment,
+  handleEasyPaisaPayment,
+  handleJazzCashPayment,
 };

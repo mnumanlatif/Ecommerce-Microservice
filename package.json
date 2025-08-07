@@ -2,9 +2,16 @@
   "name": "ecommerce-backend",
   "version": "1.0.0",
   "scripts": {
-    "dev": "concurrently -n auth,cart,product,payment -c yellow,blue,magenta,green \"npm --prefix auth-service run dev\" \"npm --prefix cart-service run dev\" \"npm --prefix product-service run dev\" \"npm --prefix payment-service run dev\""
+    "dev": "concurrently -n auth,cart,product,payment,chatbot -c yellow,blue,magenta,green,pink \"npm --prefix auth-service run dev\" \"npm --prefix cart-service run dev\" \"npm --prefix product-service run dev\" \"npm --prefix payment-service run dev\" \"npm --prefix chatbot-service run dev\""
   },
   "devDependencies": {
-    "concurrently": "^8.0.1"
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
   }
 }
