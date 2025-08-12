@@ -2,8 +2,8 @@
   "name": "ecommerce-backend",
   "version": "1.0.0",
   "scripts": {
-    "dev": "concurrently -n auth,cart,product,payment,chatbot -c yellow,blue,magenta,green,pink \"npm --prefix auth-service run dev\" \"npm --prefix cart-service run dev\" \"npm --prefix product-service run dev\" \"npm --prefix payment-service run dev\" \"npm --prefix chatbot-service run dev\""
-  },
+  "dev": "concurrently -n auth,cart,product,payment,chatbot,image -c red,green,blue,yellow,magenta,cyan \"npm --prefix auth-service run dev\" \"npm --prefix cart-service run dev\" \"npm --prefix product-service run dev\" \"npm --prefix payment-service run dev\" \"npm --prefix chatbot-service run dev\" \"npm --prefix imageSearch-service run dev\""
+},
   "devDependencies": {
     "concurrently": "^8.2.2"
   },

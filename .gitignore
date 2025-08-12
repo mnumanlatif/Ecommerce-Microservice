@@ -5,6 +5,7 @@
 # **/.env
 # **/.env.*  # e.g., .env.development, .env.production
 
+**/apikey.json
 # Ignore log files
 **/logs/
 **/*.log
@@ -34,3 +35,6 @@ Thumbs.db
 # Ignore Docker volumes or local database files if applicable
 **/data/
 **/db.sqlite
+
+
+
